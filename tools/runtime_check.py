@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 """Exercise the packaged service with disposable configuration and scan data."""
 import json
+import io
 from pathlib import Path
 import sqlite3
 import subprocess
 import sys
 import tempfile
+import tarfile
 import time
 import uuid
 
@@ -38,7 +40,17 @@ for authenticated in (False, True):
             if authenticated:
                 config = Path(folder) / "config.yml"
                 config.write_text("port: 3030\nauthentication:\n  username: smoke\n  password: fixture-only\n")
-                run("cp", str(config), name + ":/config/config.yml")
+                # docker cp can inherit the CI runner's UID. Give this synthetic
+                # configuration the service owner explicitly; never alter users' files.
+                archive = io.BytesIO()
+                with tarfile.open(fileobj=archive, mode="w") as tar:
+                    entry = tar.gettarinfo(str(config), arcname="config.yml")
+                    entry.uid = entry.gid = 1000
+                    entry.uname = entry.gname = ""
+                    with config.open("rb") as stream:
+                        tar.addfile(entry, stream)
+                subprocess.run(["docker", "cp", "-a", "-", name + ":/config/"],
+                               input=archive.getvalue(), check=True)
             run("start", name)
             for attempt in range(90):
                 result = subprocess.run(["docker", "exec", name, "curl", "-fsS",
