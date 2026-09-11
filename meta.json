@@ -1,12 +1,16 @@
 {
-  "description": "Every commit to master",
+  "description": "Pinned nightly snapshot",
   "test_amd64": true,
   "test_arm64": true,
   "test_url": "http://localhost:3030/triggers/manual",
-  "upstream_image": "ghcr.io/hotio/base",
+  "upstream_image": "ghcr.io/edbfi/base-image",
   "upstream_tag": "alpinevpn",
-  "upstream_tag_sha": "alpinevpn-1e0d32b",
-  "upstream_tag_sha__command": "json=$(cat meta.json) && upstream_image=$(jq -re '.upstream_image' <<< \"${json}\") && upstream_image_base=$(basename \"${upstream_image}\") && upstream_tag=$(jq -re '.upstream_tag' <<< \"${json}\") && tags_json=$(curl -fsSL ${GITHUB_TOKEN:+--header \"Authorization: Bearer ${GITHUB_TOKEN}\"} \"https://hotio.dev/containers/${upstream_image_base}-tags.json\") && commit_sha=$(jq -r --arg tag \"${upstream_tag}\" '.[$tag].commit_sha' <<< \"${tags_json}\") && upstream_tag_sha=${upstream_tag}-${commit_sha:0:7} && echo \"${upstream_tag_sha}\"",
+  "upstream_tag_sha": "alpinevpn-76f75eb",
   "version": "1d41f4b47ede7531ecc24944bfcaf88db10c2ba7",
-  "version__command": "curl -fsSL ${GITHUB_TOKEN:+--header \"Authorization: Bearer ${GITHUB_TOKEN}\"} \"https://api.github.com/repos/cloudbox/autoscan/commits/master\" | jq -re '.sha'"
+  "upstream_digest_amd64": "sha256:1de40909540896a3bcf7bdfa04ca1b928fe2dbe79997ec426a34d691dbe58de0",
+  "upstream_digest_arm64": "sha256:18ba9321016760dbc3bf332324fe032ade7630622f32a417cf67b263ae8705f5",
+  "source_ref": "1d41f4b47ede7531ecc24944bfcaf88db10c2ba7",
+  "source_sha256": "73f8de8379c8978bf647bb54f37a5ebc8b112ffd2db994970dc32ff10092df3a",
+  "builder_digest_amd64": "sha256:f86f1a6701e3dcc445fec097a42f78b758f15950ccf032c2d3e54e2754d32fdb",
+  "builder_digest_arm64": "sha256:df4c4a0eeb85873e0122c6e2eb1b436f3131576f572505c1ea61954b00fa6460"
 }
